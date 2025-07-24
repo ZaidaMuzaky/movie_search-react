@@ -41,8 +41,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+import Navbar from "./components/navbar";
+
 export default function App() {
-  return <Outlet />;
+  return(
+    <>
+    <div className="max-w-8xl mx-auto">
+    <Navbar />
+      <div className="px-4 py-6">
+        <Outlet />
+      </div>
+    </div>
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
