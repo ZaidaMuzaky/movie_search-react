@@ -60,7 +60,7 @@ export default function App() {
   }}
 />
 
-    <div className="max-w-8xl mx-auto">
+    <div className="max-w-8xl mx-auto bg-gray-900 text-white min-h-screen">
     <Navbar />
       <div className="px-4 py-6">
         <Outlet />
