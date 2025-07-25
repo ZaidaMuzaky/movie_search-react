@@ -32,7 +32,7 @@ export default function FavoritesPage() {
   
    const movieToDelete = favorites.find((movie) => movie.imdbID === confirmDeleteId);
   return (
-    <div className="w-full mx-auto py-8 px-4">
+    <div className="w-full mx-auto py-5 px-4">
       <h1 className="text-2xl font-bold mb-6">Your Favorite Movies ❤️</h1>
 
       {favorites.length === 0 ? (

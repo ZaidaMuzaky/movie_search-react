@@ -172,7 +172,7 @@ export default function IndexPage() {
 
 
   return (
-    <div className="w-full mx-auto py-8 px-4">
+    <div className="w-full mx-auto py-5 px-4">
       <h1 className="text-2xl font-bold mb-4">Search Movies 🎥</h1>
 
       <form

@@ -1,12 +1,15 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { toast } from "sonner"; // ⬅️ Tambahkan ini
+import { toast } from "sonner"; 
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+
 
 export default function MovieDetail() {
   const { id } = useParams();
   const [movie, setMovie] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -48,7 +51,17 @@ export default function MovieDetail() {
   if (!movie || movie.Response === "False") return <p className="text-red-500 text-center">Movie not found.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto py-10 px-4 text-white">
+    <div className="max-w-5xl mx-auto py-2 px-4 text-white">
+         <div className="mb-4">
+        <button
+  onClick={() => navigate(-1)}
+  className="flex items-center gap-2 text-base bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition"
+>
+  <ArrowLeftIcon className="w-5 h-5" />
+  Back
+</button>
+      </div>
+
       <div className="flex flex-col md:flex-row gap-8 items-start">
 
         {/* Poster + Button Favorite */}
@@ -91,27 +104,27 @@ export default function MovieDetail() {
 
           <div className="space-y-2 mt-6 bg-white/5 p-4 rounded-lg backdrop-blur-sm">
             {[
-              { label: "Director", value: movie.Director },
-              { label: "Actors", value: movie.Actors },
-              { label: "Language", value: movie.Language },
-              { label: "Awards", value: movie.Awards },
-              { label: "IMDB Rating", value: `⭐ ${movie.imdbRating}` },
-              { label: "Rated", value: movie.Rated },
-              { label: "Type", value: movie.Type },
-              { label: "Production", value: movie.Production },
-              { label: "Box Office", value: movie.BoxOffice },
+                { label: "Director", value: movie.Director },
+                { label: "Actors", value: movie.Actors },
+                { label: "Language", value: movie.Language },
+                { label: "Awards", value: movie.Awards },
+                { label: "IMDB Rating", value: movie.imdbRating ? `⭐ ${movie.imdbRating}` : null },
+                { label: "Rated", value: movie.Rated },
+                { label: "Type", value: movie.Type },
+                { label: "Production", value: movie.Production },
+                { label: "Box Office", value: movie.BoxOffice },
             ].map((item) => (
-              <div
+                <div
                 key={item.label}
                 className="grid grid-cols-[auto,1fr] gap-x-2 items-start"
-              >
+                >
                 <span className="text-blue-400 font-semibold whitespace-nowrap">
-                  {item.label}:
+                    {item.label}:
                 </span>
-                <span className="text-white">{item.value}</span>
-              </div>
+                <span className="text-white">{item.value ? item.value : "N/A"}</span>
+                </div>
             ))}
-          </div>
+            </div>
         </div>
       </div>
     </div>
