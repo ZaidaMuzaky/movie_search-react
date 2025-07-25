@@ -3,8 +3,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import { searchMovies } from "../api/omdb";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { HeartIcon } from "@heroicons/react/24/solid";
-
-const MAX_CACHE = 1;
+import { toast } from "sonner";
 const LAST_SEARCH_KEY = "lastSearchState";
 
 
@@ -54,27 +53,6 @@ export default function IndexPage() {
     return null;
   };
 
-  const saveToLocalCache = (query: string, data: any[]) => {
-    if (typeof window === "undefined" || !window.localStorage) return;
-
-    try {
-      const key = `searchCache-${query}`;
-      localStorage.setItem(key, JSON.stringify(data));
-
-      const allQueries: string[] = JSON.parse(localStorage.getItem("searchQueries") || "[]");
-      const filtered = allQueries.filter((q) => q !== query);
-      const updatedQueries = [query, ...filtered];
-      const limitedQueries = updatedQueries.slice(0, MAX_CACHE);
-      localStorage.setItem("searchQueries", JSON.stringify(limitedQueries));
-
-      const excess = updatedQueries.slice(MAX_CACHE);
-      for (const q of excess) {
-        localStorage.removeItem(`searchCache-${q}`);
-      }
-    } catch (e) {
-      console.error("Error saving to local cache:", e);
-    }
-  };
 
   const fetchMovies = async (search: string) => {
     if (!search.trim()) {
@@ -113,7 +91,6 @@ export default function IndexPage() {
       );
       setResults(detailedResults);
       sessionCache.current[search] = detailedResults;
-      saveToLocalCache(search, detailedResults);
       saveLastSearchState(search, detailedResults);
     } else {
       setResults([]);
@@ -163,7 +140,7 @@ export default function IndexPage() {
     try {
       const alreadyExists = favorites.find((m: any) => m.imdbID === movie.imdbID);
       if (alreadyExists) {
-        alert(`${movie.Title} is already in favorites!`);
+        toast.error(`${movie.Title} is already in favorites!`);
         return;
       }
 
@@ -173,22 +150,26 @@ export default function IndexPage() {
       const updated = [...favorites, fullData];
       localStorage.setItem("favorites", JSON.stringify(updated));
       setFavorites(updated); // ⬅️ update state
-      alert(`${movie.Title} added to favorites!`);
+      toast.success(`${movie.Title} added to favorites!`);
     } catch (e) {
       console.error("Error adding to favorites:", e);
     }
   };
 
-  const removeFromFavorites = (imdbID: string) => {
-    try {
-      const updated = favorites.filter((m: any) => m.imdbID !== imdbID);
-      localStorage.setItem("favorites", JSON.stringify(updated));
-      setFavorites(updated); // ⬅️ update state
-      alert("Removed from favorites!");
-    } catch (e) {
-      console.error("Error removing from favorites:", e);
+ const removeFromFavorites = (imdbID: string) => {
+  try {
+    const toRemove = favorites.find((m: any) => m.imdbID === imdbID);
+    const updated = favorites.filter((m: any) => m.imdbID !== imdbID);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+    setFavorites(updated);
+    if (toRemove) {
+      toast.info(`${toRemove.Title} removed from favorites.`);
     }
-  };
+  } catch (e) {
+    console.error("Error removing from favorites:", e);
+  }
+};
+
 
   return (
     <div className="w-full mx-auto py-8 px-4">
@@ -216,14 +197,22 @@ export default function IndexPage() {
         </button>
       </form>
 
-      {loading && <p className="text-gray-400">Loading...</p>}
+      {loading && (
+        <div className="flex justify-center items-center space-x-2 py-8">
+        <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+        <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+        <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+      </div>
+      )}
+
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {results.map((movie) => (
-          <div
-            key={movie.imdbID}
-            className="bg-gray-800 p-3 rounded shadow-md flex flex-col h-full"
-          >
+         <div
+  key={movie.imdbID}
+  className="bg-gray-800 p-3 rounded shadow-md flex flex-col h-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
+>
+
             <Link to={`/movies/${movie.imdbID}`} className="block mb-2">
               <img
                 src={movie.Poster}

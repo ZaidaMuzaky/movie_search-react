@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { TrashIcon } from "@heroicons/react/24/solid"; // pastikan sudah install @heroicons/react
+import { TrashIcon } from "@heroicons/react/24/solid";
 
 export default function FavoritesPage() {
   const [favorites, setFavorites] = useState<any[]>([]);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("favorites");
@@ -12,12 +13,24 @@ export default function FavoritesPage() {
     }
   }, []);
 
-  const removeFromFavorites = (id: string) => {
-    const updated = favorites.filter((movie) => movie.imdbID !== id);
-    setFavorites(updated);
-    localStorage.setItem("favorites", JSON.stringify(updated));
+  const handleRemoveClick = (id: string) => {
+    setConfirmDeleteId(id); // buka popup
   };
 
+  const confirmRemove = () => {
+    if (confirmDeleteId) {
+      const updated = favorites.filter((movie) => movie.imdbID !== confirmDeleteId);
+      setFavorites(updated);
+      localStorage.setItem("favorites", JSON.stringify(updated));
+      setConfirmDeleteId(null); // tutup popup
+    }
+  };
+
+  const cancelRemove = () => {
+    setConfirmDeleteId(null); // batalkan penghapusan
+  };
+  
+   const movieToDelete = favorites.find((movie) => movie.imdbID === confirmDeleteId);
   return (
     <div className="w-full mx-auto py-8 px-4">
       <h1 className="text-2xl font-bold mb-6">Your Favorite Movies ❤️</h1>
@@ -29,14 +42,14 @@ export default function FavoritesPage() {
           {favorites.map((movie) => (
             <div
               key={movie.imdbID}
-              className="bg-gray-800 p-3 rounded shadow-md flex flex-col h-full"
+              className="bg-gray-800 p-3 rounded shadow-md flex flex-col h-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
             >
               <Link to={`/movies/${movie.imdbID}`} className="block mb-2">
                 <img
-                    src={movie.Poster}
-                    alt={movie.Title}
-                    className="w-full aspect-[2/3] object-cover rounded mb-2"
-                  />
+                  src={movie.Poster}
+                  alt={movie.Title}
+                  className="w-full aspect-[2/3] object-cover rounded mb-2"
+                />
 
                 <h2 className="text-md font-semibold line-clamp-2 min-h-[3rem]">
                   {movie.Title}
@@ -49,7 +62,7 @@ export default function FavoritesPage() {
               </Link>
 
               <button
-                onClick={() => removeFromFavorites(movie.imdbID)}
+                onClick={() => handleRemoveClick(movie.imdbID)}
                 className="mt-auto w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded"
               >
                 <TrashIcon className="w-4 h-4" />
@@ -57,6 +70,35 @@ export default function FavoritesPage() {
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal Popup */}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 bg-blur-sm">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900">
+              Are you sure you want to remove{" "}
+              <span className="font-bold text-red-600">
+                {movieToDelete?.Title}
+              </span>{" "}
+              from favorites?
+            </h2>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={cancelRemove}
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmRemove}
+                className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
+              >
+                Yes, Remove
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -9,6 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import Navbar from "./components/Navbar";
+import { Toaster } from "sonner";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,11 +43,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-import Navbar from "./components/navbar";
-
 export default function App() {
   return(
     <>
+  <Toaster
+  position="top-right"
+  richColors
+  toastOptions={{
+    classNames: {
+      toast: "max-w-sm text-sm",
+    },
+    style: {
+      marginTop: "env(safe-area-inset-top)", 
+    },
+    duration: 1500,
+  }}
+/>
+
     <div className="max-w-8xl mx-auto">
     <Navbar />
       <div className="px-4 py-6">
