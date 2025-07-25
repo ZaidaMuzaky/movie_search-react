@@ -1,87 +1,58 @@
-# Welcome to React Router!
+# 🎬 MovieSearch App
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
-
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
-npm run dev
-```
-
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+A responsive web application that allows users to search for movies, view detailed information, and manage their favorites — built with **React Router 7 (Framework Mode)**, **TypeScript**, and **TailwindCSS**.
 
 ---
 
-Built with ❤️ using React Router.
+## ✅ Features
+
+- 🔍 **Search Movies** by title using [OMDb API](https://www.omdbapi.com/)
+- 📄 **Display Search Results** in responsive grid
+- 🎥 **Movie Detail View** with full poster and description
+- ❤️ **Favorites System** saved via `localStorage`
+- 🌙 **Responsive Design** with mobile support and animated menu
+- 🔔 **User Feedback** using toast notifications
+- 🧭 **Menu Tracking** based on last visited tab (Search/Favorites)
+
+---
+
+## 📦 Tech Stack
+
+| Feature | Technology |
+|--------|-------------|
+| UI | React 19, TailwindCSS |
+| Routing | React Router v7 (Framework Mode) |
+| Language | TypeScript |
+| Toast | [Sonner](https://github.com/emilkowalski/sonner) (MIT License) |
+| Icons | [Heroicons](https://heroicons.com) (MIT License) |
+| Build Tool | Vite |
+| Deployment Ready | ✅ |
+
+---
+
+## 🛡 License Info
+
+All third-party libraries used are under **MIT** or **Apache 2.0 License**, including:
+
+- `react`, `react-dom`
+- `react-router`, `@react-router/dev`
+- `tailwindcss`
+- `vite`
+- `sonner`, `heroicons`
+
+✔️ **Complies with Only free-licensed libraries used**
+
+---
+
+## 🚀 How to Run Locally
+
+```bash
+# Clone the repository
+git clone https://github.com/ZaidaMuzaky/movie_search-react.git
+cd movie_search-react
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
