@@ -1,17 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 import { ArrowLeftIcon, PhotoIcon } from "@heroicons/react/24/solid";
-
 
 export default function MovieDetail() {
   const { id } = useParams();
   const [movie, setMovie] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
-  const navigate = useNavigate();
   const [hasImageError, setHasImageError] = useState(false);
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -24,7 +22,6 @@ export default function MovieDetail() {
     fetchMovie();
   }, [id]);
 
-  // Cek apakah movie sudah ada di localStorage favorite
   useEffect(() => {
     if (movie) {
       const favs = JSON.parse(localStorage.getItem("favorites") || "[]");
@@ -49,23 +46,33 @@ export default function MovieDetail() {
     }
   };
 
-  if (loading) return <p className="text-gray-400 text-center">Loading movie details...</p>;
-  if (!movie || movie.Response === "False") return <p className="text-red-500 text-center">Movie not found.</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center space-x-2 py-12">
+        <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+        <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+        <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+      </div>
+    );
+  }
+
+  if (!movie || movie.Response === "False") {
+    return <p className="text-red-500 text-center">Movie not found.</p>;
+  }
 
   return (
     <div className="max-w-5xl mx-auto py-2 px-4 text-white">
-         <div className="mb-4">
+      <div className="mb-4">
         <button
-  onClick={() => navigate(-1)}
-  className="flex items-center gap-2 text-base bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition"
->
-  <ArrowLeftIcon className="w-5 h-5" />
-  Back
-</button>
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-base bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition"
+        >
+          <ArrowLeftIcon className="w-5 h-5" />
+          Back
+        </button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8 items-start">
-
         {/* Poster + Button Favorite */}
         <div className="w-full md:w-64 flex flex-col items-center gap-4">
           {!movie.Poster || movie.Poster === "N/A" || hasImageError ? (
@@ -82,11 +89,12 @@ export default function MovieDetail() {
             />
           )}
 
-
           <button
             onClick={handleToggleFavorite}
             className={`w-full px-4 py-2 rounded text-white ${
-              isFavorite ? "bg-gray-700 hover:bg-gray-600" : "bg-red-600 hover:bg-red-700"
+              isFavorite
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-red-600 hover:bg-red-700"
             }`}
           >
             {isFavorite ? "💔 Remove from Favorites" : "❤️ Add to Favorites"}
@@ -115,27 +123,29 @@ export default function MovieDetail() {
 
           <div className="space-y-2 mt-6 bg-white/5 p-4 rounded-lg backdrop-blur-sm">
             {[
-                { label: "Director", value: movie.Director },
-                { label: "Actors", value: movie.Actors },
-                { label: "Language", value: movie.Language },
-                { label: "Awards", value: movie.Awards },
-                { label: "IMDB Rating", value: movie.imdbRating ? `⭐ ${movie.imdbRating}` : null },
-                { label: "Rated", value: movie.Rated },
-                { label: "Type", value: movie.Type },
-                { label: "Production", value: movie.Production },
-                { label: "Box Office", value: movie.BoxOffice },
+              { label: "Director", value: movie.Director },
+              { label: "Actors", value: movie.Actors },
+              { label: "Language", value: movie.Language },
+              { label: "Awards", value: movie.Awards },
+              { label: "IMDB Rating", value: movie.imdbRating ? `⭐ ${movie.imdbRating}` : null },
+              { label: "Rated", value: movie.Rated },
+              { label: "Type", value: movie.Type },
+              { label: "Production", value: movie.Production },
+              { label: "Box Office", value: movie.BoxOffice },
             ].map((item) => (
-                <div
+              <div
                 key={item.label}
                 className="grid grid-cols-[auto,1fr] gap-x-2 items-start"
-                >
+              >
                 <span className="text-blue-400 font-semibold whitespace-nowrap">
-                    {item.label}:
+                  {item.label}:
                 </span>
-                <span className="text-white">{item.value ? item.value : "N/A"}</span>
-                </div>
+                <span className="text-white">
+                  {item.value ? item.value : "N/A"}
+                </span>
+              </div>
             ))}
-            </div>
+          </div>
         </div>
       </div>
     </div>
