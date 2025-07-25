@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { TrashIcon } from "@heroicons/react/24/solid";
+import { PhotoIcon } from "@heroicons/react/24/outline"; 
 
 export default function FavoritesPage() {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [errorPosters, setErrorPosters] = useState<string[]>([]); 
 
   useEffect(() => {
     const stored = localStorage.getItem("favorites");
@@ -14,7 +16,7 @@ export default function FavoritesPage() {
   }, []);
 
   const handleRemoveClick = (id: string) => {
-    setConfirmDeleteId(id); // buka popup
+    setConfirmDeleteId(id);
   };
 
   const confirmRemove = () => {
@@ -22,15 +24,19 @@ export default function FavoritesPage() {
       const updated = favorites.filter((movie) => movie.imdbID !== confirmDeleteId);
       setFavorites(updated);
       localStorage.setItem("favorites", JSON.stringify(updated));
-      setConfirmDeleteId(null); // tutup popup
+      setConfirmDeleteId(null);
     }
   };
 
   const cancelRemove = () => {
-    setConfirmDeleteId(null); // batalkan penghapusan
+    setConfirmDeleteId(null);
   };
-  
-   const movieToDelete = favorites.find((movie) => movie.imdbID === confirmDeleteId);
+
+  const movieToDelete = favorites.find((movie) => movie.imdbID === confirmDeleteId);
+
+  const isPosterBroken = (movie: any) =>
+    !movie.Poster || movie.Poster === "N/A" || errorPosters.includes(movie.imdbID);
+
   return (
     <div className="w-full mx-auto py-5 px-4">
       <h1 className="text-2xl font-bold mb-6">Your Favorite Movies ❤️</h1>
@@ -45,11 +51,23 @@ export default function FavoritesPage() {
               className="bg-gray-800 p-3 rounded shadow-md flex flex-col h-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
             >
               <Link to={`/movies/${movie.imdbID}`} className="block mb-2">
-                <img
-                  src={movie.Poster}
-                  alt={movie.Title}
-                  className="w-full aspect-[2/3] object-cover rounded mb-2"
-                />
+                {isPosterBroken(movie) ? (
+                  <div className="w-full aspect-[2/3] flex flex-col items-center justify-center bg-gray-700 rounded mb-2">
+                    <PhotoIcon className="h-10 w-10 text-gray-400 mb-1" />
+                    <span className="text-xs text-gray-400">Poster not available</span>
+                  </div>
+                ) : (
+                  <img
+                    src={movie.Poster}
+                    alt={movie.Title}
+                    className="w-full aspect-[2/3] object-cover rounded mb-2"
+                    onError={() =>
+                      setErrorPosters((prev) =>
+                        prev.includes(movie.imdbID) ? prev : [...prev, movie.imdbID]
+                      )
+                    }
+                  />
+                )}
 
                 <h2 className="text-md font-semibold line-clamp-2 min-h-[3rem]">
                   {movie.Title}

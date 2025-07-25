@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner"; 
-import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon, PhotoIcon } from "@heroicons/react/24/solid";
 
 
 export default function MovieDetail() {
@@ -10,6 +10,8 @@ export default function MovieDetail() {
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
+  const [hasImageError, setHasImageError] = useState(false);
+
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -66,11 +68,20 @@ export default function MovieDetail() {
 
         {/* Poster + Button Favorite */}
         <div className="w-full md:w-64 flex flex-col items-center gap-4">
-          <img
-            src={movie.Poster !== "N/A" ? movie.Poster : "/fallback.jpg"}
-            alt={movie.Title}
-            className="w-full rounded shadow-lg object-cover"
-          />
+          {!movie.Poster || movie.Poster === "N/A" || hasImageError ? (
+            <div className="w-full aspect-[2/3] flex flex-col items-center justify-center bg-gray-700 rounded shadow p-4 text-center">
+              <PhotoIcon className="w-10 h-10 text-gray-400 mb-2" />
+              <p className="text-sm text-gray-400">Poster not available</p>
+            </div>
+          ) : (
+            <img
+              src={movie.Poster}
+              alt={movie.Title}
+              className="w-full aspect-[2/3] object-cover rounded shadow"
+              onError={() => setHasImageError(true)}
+            />
+          )}
+
 
           <button
             onClick={handleToggleFavorite}
