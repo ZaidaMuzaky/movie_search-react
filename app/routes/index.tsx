@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { searchMovies } from "../api/omdb";
+import { searchMovies,getMovieDetail } from "../api/omdb";
 import { MagnifyingGlassIcon, HeartIcon, PhotoIcon } from "@heroicons/react/24/solid";
 import { toast } from "sonner";
 
@@ -13,7 +13,7 @@ export default function IndexPage() {
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState<any[]>([]);
   const [errorPosters, setErrorPosters] = useState<string[]>([]);
-  const sessionCache = useRef<{ [key: string]: any[] }>({});
+  const sessionStorage = useRef<{ [key: string]: any[] }>({});
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");
@@ -50,9 +50,9 @@ export default function IndexPage() {
       return;
     }
 
-    if (sessionCache.current[search]) {
-      setResults(sessionCache.current[search]);
-      saveLastSearchState(search, sessionCache.current[search]);
+    if (sessionStorage.current[search]) {
+      setResults(sessionStorage.current[search]);
+      saveLastSearchState(search, sessionStorage.current[search]);
       return;
     }
 
@@ -60,7 +60,7 @@ export default function IndexPage() {
     if (cached) {
       const parsed = JSON.parse(cached);
       setResults(parsed);
-      sessionCache.current[search] = parsed;
+      sessionStorage.current[search] = parsed;
       saveLastSearchState(search, parsed);
       return;
     }
@@ -69,13 +69,10 @@ export default function IndexPage() {
     const data = await searchMovies(search);
     if (data.Search) {
       const detailedResults = await Promise.all(
-        data.Search.map(async (movie: any) => {
-          const res = await fetch(`https://www.omdbapi.com/?apikey=b1c026c1&i=${movie.imdbID}`);
-          return await res.json();
-        })
+        data.Search.map(async (movie: any) => getMovieDetail(movie.imdbID))
       );
       setResults(detailedResults);
-      sessionCache.current[search] = detailedResults;
+      sessionStorage.current[search] = detailedResults;
       saveLastSearchState(search, detailedResults);
     } else {
       setResults([]);
@@ -94,7 +91,7 @@ export default function IndexPage() {
       if (last) {
         setQuery(last.query);
         setResults(last.results);
-        sessionCache.current[last.query] = last.results;
+        sessionStorage.current[last.query] = last.results;
       }
     }
   }, [searchParams]);
@@ -122,8 +119,7 @@ export default function IndexPage() {
         return;
       }
 
-      const res = await fetch(`https://www.omdbapi.com/?apikey=b1c026c1&i=${movie.imdbID}`);
-      const fullData = await res.json();
+      const fullData = await getMovieDetail(movie.imdbID);
       const updated = [...favorites, fullData];
       localStorage.setItem("favorites", JSON.stringify(updated));
       setFavorites(updated);

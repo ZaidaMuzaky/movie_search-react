@@ -24,7 +24,7 @@ export default function Navbar() {
 
   // Ambil data aktif terakhir kalau di halaman movie/:id
   useEffect(() => {
-    if (location.pathname.startsWith("/movie/")) {
+    if (location.pathname.startsWith("/movies/")) {
       const last = localStorage.getItem("lastMenu") || "/";
       setActiveMenu(last);
     }
