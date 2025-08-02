@@ -46,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return(
     <>
-  <Toaster
+  {/* <Toaster
   position="top-right"
   richColors
   toastOptions={{
@@ -58,10 +58,10 @@ export default function App() {
     },
     duration: 1500,
   }}
-/>
+/> */}
 
-    <div className="max-w-8xl mx-auto bg-gray-900 text-white min-h-screen">
-    <Navbar />
+    <div className="max-w-full mx-auto bg-gray-900 text-white min-h-screen">
+    {/* <Navbar /> */}
       <div className="px-4 py-6">
         <Outlet />
       </div>
